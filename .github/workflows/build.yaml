@@ -26,23 +26,16 @@ jobs:
     - name: Checkout files in repo
       uses: actions/checkout@main
 
-    - name: Build the image and push to quay.io if not a pull request
+    # https://github.com/jupyterhub/repo2docker-action#push-repo2docker-image-to-github-package-registry
+    - name: Build the image and push
       uses: jupyterhub/repo2docker-action@master
-      with:
-        # Don't push the image during a PR build
-        NO_PUSH: "${{ github.event_name == 'pull_request' }}"
-        # Make sure username & password/token pair matches your registry credentials
-        DOCKER_USERNAME: ${{ secrets.QUAY_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
-        DOCKER_REGISTRY: "quay.io"
-        # Disable pushing a 'latest' tag, as this often just causes confusion
+      with: 
+        DOCKER_USERNAME: ${{github.actor}}
+        DOCKER_PASSWORD: ${{secrets.GITHUB_TOKEN}}
+        DOCKER_REGISTRY: "ghcr.io"
+        IMAGE_NAME: "uw-escience-cloudbank/hub-image-jupyterai"
         LATEST_TAG_OFF: true
-        # Put repo contents in /srv/repo, rather than the default (/home/jovyan). The home directory
-        # is mounted over by persistent storage when we are using the built image in a JupyterHub, and
-        # so all contents put in /home/jovyan are lost. This particularly prevents any 'start' script from
-        # working, as it is needed in runtime.
         REPO_DIR: /srv/repo
-        #
         # Uncomment and modify the following line with your image name, otherwise no push will happen
         # IMAGE_NAME: "<quay-username>/<repository-name>"
 

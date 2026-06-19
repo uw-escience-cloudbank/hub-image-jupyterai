@@ -7,3 +7,6 @@ dependencies:
   - python=3.13
   - jupyter-ai>=3
   - geopandas>=1
+  - pip
+  - pip:
+    - jupyternaut

@@ -1,0 +1,17 @@
+#!/bin/bash
+# This script runs at container start (before the Jupyter server launches).
+# It configures the Anthropic SDK to route requests through the Azure AI
+# Foundry deployment instead of the direct Anthropic API endpoint.
+#
+# The ANTHROPIC_API_KEY (or equivalent Azure credential) must be supplied
+# separately, e.g. via a JupyterHub profile or a Kubernetes secret – do NOT
+# bake secrets into this image.
+
+set -e
+
+export CLAUDE_CODE_USE_FOUNDRY=1
+# NOTE: user must set these after login
+#export ANTHROPIC_FOUNDRY_RESOURCE="XXXX"
+#export ANTHROPIC_FOUNDRY_API_KEY="YYYY"
+
+exec "$@"

@@ -8,7 +8,7 @@ on:
     branches:
       - main
 
-permissions: 
+permissions:
   contents: read
   packages: write
 
@@ -28,12 +28,12 @@ jobs:
         df -h
 
     - name: Checkout files in repo
-      uses: actions/checkout@main
+      uses: actions/checkout@v7
 
     # https://github.com/jupyterhub/repo2docker-action#push-repo2docker-image-to-github-package-registry
     - name: Build the image and push
       uses: jupyterhub/repo2docker-action@master
-      with: 
+      with:
         DOCKER_USERNAME: ${{github.actor}}
         DOCKER_PASSWORD: ${{secrets.GITHUB_TOKEN}}
         DOCKER_REGISTRY: "ghcr.io"

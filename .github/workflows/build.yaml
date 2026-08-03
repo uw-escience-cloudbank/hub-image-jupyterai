@@ -28,7 +28,7 @@ jobs:
         df -h
 
     - name: Checkout files in repo
-      uses: actions/checkout@7
+      uses: actions/checkout@v7
 
     # https://github.com/jupyterhub/repo2docker-action#push-repo2docker-image-to-github-package-registry
     - name: Build the image and push

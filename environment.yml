@@ -5,8 +5,8 @@ channels:
 
 dependencies:
   - python=3.13
-  - jupyter-ai>=3
+  - jupyter-ai>=3.1
   - geopandas>=1
   - pip
   - pip:
-    - jupyternaut
+    - jupyter-ai-jupyternaut==0.1.0b0

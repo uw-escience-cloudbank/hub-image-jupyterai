@@ -38,7 +38,8 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.GITHUB_TOKEN}}
         DOCKER_REGISTRY: "ghcr.io"
         IMAGE_NAME: "uw-escience-cloudbank/hub-image-jupyterai"
-        LATEST_TAG_OFF: false
+        # Must be commented to push 'latest' tag
+        # LATEST_TAG_OFF: true
         REPO_DIR: /srv/repo
         # Uncomment and modify the following line with your image name, otherwise no push will happen
         # IMAGE_NAME: "<quay-username>/<repository-name>"

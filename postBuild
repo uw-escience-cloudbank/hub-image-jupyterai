@@ -1,10 +1,8 @@
 #!/bin/bash
 set -e
 
-# Install the Jupyter AI configuration file into the conda environment's
-# Jupyter config directory. This location is scanned by Jupyter at startup
-# and, unlike ~/.jupyter/, is not overwritten by a persistent home-directory
-# volume mount in JupyterHub.
-mkdir -p "${NB_PYTHON_PREFIX}/etc/jupyter"
-cp jupyter_jupyter_ai_config.json \
-    "${NB_PYTHON_PREFIX}/etc/jupyter/jupyter_jupyter_ai_config.json"
+# Install JupyterAI Connections or other things
+npm install -g @agentclientprotocol/claude-agent-acp
+
+# Also Claude Code CLI
+curl -fsSL https://claude.ai/install.sh | bash

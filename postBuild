@@ -6,3 +6,7 @@ npm install -g @agentclientprotocol/claude-agent-acp
 
 # Also Claude Code CLI
 curl -fsSL https://claude.ai/install.sh | bash
+
+# Helper to point Claude Code at the CloudBank LiteLLM proxy
+mkdir -p "${HOME}/.local/bin"
+install -m 755 setup-claude-cloudbank.py "${HOME}/.local/bin/setup-claude-cloudbank"

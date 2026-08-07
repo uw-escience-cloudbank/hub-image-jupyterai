@@ -1,0 +1,4 @@
+vim
+
+# Needed for jupyter-sshd-proxy
+openssh-server

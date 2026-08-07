@@ -1,0 +1,24 @@
+# repo2docker copies the whole build context into ${REPO_DIR}, which defaults to
+# ${HOME}. Docker's COPY does not read .gitignore, so anything excluded there
+# still lands in the image unless it is listed here as well.
+#
+# NOTE: only affects local `pixi run repo2docker` builds. In CI, actions/checkout
+# produces a clean tree, so most of these paths do not exist there anyway.
+
+# Local secrets - these must never be baked into an image
+.env
+.envrc
+
+# The local pixi environment used to *run* repo2docker (~1.6GB)
+.pixi/
+
+# Version control and editor/tooling state
+.git/
+.github/
+.devcontainer/
+.claude/
+.ipynb_checkpoints/
+
+# Scratch files and notes that the image does not need
+claude-debug/
+*.bak

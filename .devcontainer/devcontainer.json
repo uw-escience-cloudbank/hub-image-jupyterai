@@ -1,0 +1,4 @@
+{
+  "name": "hub-image-jupyterai",
+  "image": "ghcr.io/uw-escience-cloudbank/hub-image-jupyterai:latest"
+}

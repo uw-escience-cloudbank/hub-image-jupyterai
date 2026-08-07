@@ -4,16 +4,19 @@ channels:
   - conda-forge
 
 dependencies:
-  # Recommended for all events
-  - python=3.13
+  # Pin the version of Python you want!
+  - python=3.14
+  # Warning: jupyter-ai is evolving rapily! consider specific pin
   - jupyter-ai>=3.1
-  # For vscode or rstudio in addition to jupyterlab
+  # For vscode (or rstudio) UIs in addition to jupyterlab
   # https://docs.2i2c.org/admin/environment/alternative-interfaces/#vs-code-code-server
   - jupyter-server-proxy
+  # VSCode
+  # https://docs.2i2c.org/admin/environment/code-server
   - jupyter-vscode-proxy
   - code-server
-  # for SSH access
-  - openssh-server
+  # SSH access
+  # https://docs.2i2c.org/admin/environment/ssh-access/
   - jupyter-sshd-proxy
   # Event or domain-specific packages
   - geopandas>=1

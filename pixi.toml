@@ -14,6 +14,15 @@ start = "bash -c 'set -a; . ./.env; set +a; exec jupyter lab --no-browser --AiEx
 #start = "jupyter lab --config=jupyter_lab_config.py"
 #start = "jupyter lab --no-browser --AiExtension.allowed_providers=openai --AiExtension.initial_language_model=openai/cloudbank-deepseek.r1"
 #start = "jupyter lab --config=jupyter_jupyter_ai_config.json"
+# repo2docker builds one architecture per invocation (--Repo2Docker.platform maps
+# 1:1 onto a conda lockfile), so multi-arch = two builds + a manifest list.
+repo2docker="repo2docker --Repo2Docker.platform=linux/amd64 --no-run --image-name hub-image-jupyterai:local-amd64 ./"
+repo2docker-arm64="repo2docker --Repo2Docker.platform=linux/arm64 --no-run --image-name hub-image-jupyterai:local-arm64 ./"
+# repo2docker has no --force flag and skips the build when the target tag already
+# exists, so drop the tags to force a rebuild. This leaves the buildx layer cache
+# alone, so the rebuild is still incremental.
+repo2docker-clean="docker rmi -f hub-image-jupyterai:local-amd64 hub-image-jupyterai:local-arm64 || true"
+repo2docker-all={ depends-on=["repo2docker", "repo2docker-arm64"] }
 
 
 [dependencies]
@@ -31,6 +40,7 @@ pyyaml = ">=6.0.3,<7"
 # apscheduler = ">=3.11.3,<4"
 # required for jupyternaut apparently
 boto3 = ">=1.43.63,<2"
+jupyter-repo2docker = ">=2025.12.0,<2026"
 
 [pypi-dependencies]
 # NOTE: add persistent memory? https://jupyter-ai.readthedocs.io/en/v3/users/jupyternaut/index.html#model-selection

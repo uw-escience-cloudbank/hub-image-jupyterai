@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+
+# use 'detached environments' to avoid bloating $HOME
+# also /tmp is a faster SSD compared to $HOME (NFS)
+export PIXI_CACHE_DETACHED_ENVIRONMENTS_DIR=/tmp/pixi-envs
+
+exec "$@"

@@ -14,7 +14,25 @@ Goal: Wire up to UW eScience SSEC's [LiteLLM Proxy server](https://github.com/uw
 - in brief: modify environment.yml, commits to main build [Docker images linked to this repository](https://github.com/uw-escience-cloudbank/hub-image-jupyterai/pkgs/container/hub-image-jupyterai) tagged with :sha and :latest
 - in detail: https://docs.2i2c.org/admin/environment/hub-user-image-template-guide/
 
+## Build locally
+
+This uses [repo2docker](https://repo2docker.readthedocs.io/en/latest/)
+```
+pixi run repo2docker # AMD64
+pixi run repo2docker-arm64 # ARM64
+pixi run repo2docker-all # Both
+```
+
+Containers built locally automatically get tagged with `hub-image-jupyterai:local-amd64` and `hub-image-jupyterai:local-arm64`. You can run them with:
+
+```
+docker run -it --rm hub-image-jupyterai:local-amd64 /bin/bash
+docker run -it --rm hub-image-jupyterai:local-arm64 /bin/bash
+```
+
 ## Container Usage:
+
+Containers built via github actions end up as repo packages and therefore can be pulled from the GitHub Container Registry (ghcr.io) with the following commands:
 
 ```
 docker pull ghcr.io/uw-escience-cloudbank/hub-image-jupyterai:latest

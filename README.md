@@ -30,12 +30,25 @@ docker run -it --rm hub-image-jupyterai:local-amd64 /bin/bash
 docker run -it --rm hub-image-jupyterai:local-arm64 /bin/bash
 ```
 
+Pull from GitHub Container Registry (ghcr.io) with:
+
+```
+docker pull ghcr.io/uw-escience-cloudbank/hub-image-jupyterai:latest
+```
+
 ## Container Usage:
 
 Containers built via github actions end up as repo packages and therefore can be pulled from the GitHub Container Registry (ghcr.io) with the following commands:
 
+By default images built with repo2docker run JupyterLab:
+
 ```
-docker pull ghcr.io/uw-escience-cloudbank/hub-image-jupyterai:latest
+docker run -it --rm -p 8888:8888 ghcr.io/uw-escience-cloudbank/hub-image-jupyterai:latest
+```
+
+Or you can specify a command to run in the container, e.g. to get a shell:
+
+```
 docker run -it --rm ghcr.io/uw-escience-cloudbank/hub-image-jupyterai:latest /bin/bash
 ```
 

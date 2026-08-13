@@ -16,8 +16,11 @@ start = "bash -c 'set -a; . ./.env; set +a; exec jupyter lab --no-browser --AiEx
 #start = "jupyter lab --config=jupyter_jupyter_ai_config.json"
 # repo2docker builds one architecture per invocation (--Repo2Docker.platform maps
 # 1:1 onto a conda lockfile), so multi-arch = two builds + a manifest list.
-repo2docker="repo2docker --Repo2Docker.platform=linux/amd64 --no-run --image-name hub-image-jupyterai:local-amd64 ./"
-repo2docker-arm64="repo2docker --Repo2Docker.platform=linux/arm64 --no-run --image-name hub-image-jupyterai:local-arm64 ./"
+# --target-repo-dir must match REPO_DIR in .github/workflows/build.yaml: binder/postBuild
+# installs the CLI tools into ${REPO_DIR}/.local/bin, so a local build without it
+# would put them somewhere the built image never uses.
+repo2docker="repo2docker --Repo2Docker.platform=linux/amd64 --target-repo-dir=/srv/repo --no-run --image-name hub-image-jupyterai:local-amd64 ./"
+repo2docker-arm64="repo2docker --Repo2Docker.platform=linux/arm64 --target-repo-dir=/srv/repo --no-run --image-name hub-image-jupyterai:local-arm64 ./"
 # repo2docker has no --force flag and skips the build when the target tag already
 # exists, so drop the tags to force a rebuild. This leaves the buildx layer cache
 # alone, so the rebuild is still incremental.

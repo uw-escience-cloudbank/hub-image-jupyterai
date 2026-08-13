@@ -11,17 +11,36 @@ XDG_CACHE_HOME="$(mktemp -d)"
 export XDG_CACHE_HOME
 trap 'rm -rf "${XDG_CACHE_HOME}"' EXIT
 
+# Every installer below defaults to ${HOME} (/home/${NB_USER}/.local/bin), which
+# is useless on the hub: each user's ${HOME} is a persistent volume mounted over
+# that path at runtime, hiding anything baked in at build time. Install into
+# ${REPO_DIR} instead (/srv/repo in CI, see .github/workflows/build.yaml).
+# repo2docker already puts ${REPO_DIR}/.local/bin on PATH.
+#
+# Note the env assignments sit on the *right* of each pipe: in `VAR=x curl | sh`
+# the assignment applies to curl, not to the shell actually running the script.
+BIN_DIR="${REPO_DIR}/.local/bin"
+mkdir -p "${BIN_DIR}"
+
 # Install Pixi
-curl -fsSL https://pixi.sh/install.sh | sh
+# PIXI_NO_PATH_UPDATE: the binary is already on PATH, and pixi would otherwise
+# append a PATH line to ${HOME}/.bashrc, which the home mount hides anyway.
+curl -fsSL https://pixi.sh/install.sh | PIXI_BIN_DIR="${BIN_DIR}" PIXI_NO_PATH_UPDATE=1 sh
 
 # Install AWS CLI v2
-curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash
+# Installs to ${XDG_DATA_HOME}/aws-cli and symlinks aws/aws_completer into ${XDG_BIN_HOME}.
+curl -fsSL https://awscli.amazonaws.com/v2/install.sh |
+    XDG_BIN_HOME="${BIN_DIR}" XDG_DATA_HOME="${REPO_DIR}/.local/share" bash
 
 # Also Claude Code CLI
-curl -fsSL https://claude.ai/install.sh | bash
+# No install-dir option: it hardcodes ${HOME}/.local/{bin,share}, so move HOME.
+# The launcher it drops in .local/bin is an absolute symlink into
+# .local/share/claude/versions/, so it still resolves once ${HOME} is a real
+# user home at runtime.
+curl -fsSL https://claude.ai/install.sh | HOME="${REPO_DIR}" bash
 
 # Install GitHub CoPilot CLI (also enables copilot via JupyterAI)
-curl -fsSL https://gh.io/copilot-install | bash
+curl -fsSL https://gh.io/copilot-install | PREFIX="${REPO_DIR}/.local" bash
 
 # JupyterAI Connections or other things
 # https://jupyter-ai.readthedocs.io/en/stable/getting-started.html#install-agents
@@ -31,5 +50,4 @@ npm install -g @agentclientprotocol/claude-agent-acp
 npm cache clean --force
 
 # Install custom scripts
-$NB_PYTHON_PREFIX/
 install -m 755 binder/setup-claude-cloudbank.py "$NB_PYTHON_PREFIX/bin/setup-claude-cloudbank"

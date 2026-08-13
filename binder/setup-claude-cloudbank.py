@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Configure Claude Code to use the CloudBank LiteLLM proxy.
 
-Writes ~/.claude/settings.json pointing Claude Code at the CloudBank proxy,
-backing up any existing settings.json to settings.json.bak first.
+Writes ~/.claude/settings.json pointing Claude Code at the CloudBank proxy.
+If settings.json already holds a valid CloudBank config, re-running is a
+no-op. Any other existing settings.json is backed up to settings.json.bak
+before being overwritten.
 
 Usage:
     setup-claude-cloudbank              # prompt for key and write settings.json
@@ -20,7 +22,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-BASE_URL = "https://cloudbank-litellm.westus2.cloudapp.azure.com"
+BASE_URL = "https://llmaven-prod-litellm-prod.lemonmoss-19296c81.westus2.azurecontainerapps.io"
 SETTINGS_PATH = Path.home() / ".claude" / "settings.json"
 
 
@@ -29,9 +31,9 @@ def settings_template(api_key):
         "env": {
             "ANTHROPIC_BASE_URL": BASE_URL,
             "ANTHROPIC_API_KEY": api_key,
-            "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5",
-            "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5",
-            "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5",
+            "ANTHROPIC_DEFAULT_HAIKU_MODEL": "cloudbank-claude-haiku-4-5",
+            "ANTHROPIC_DEFAULT_SONNET_MODEL": "cloudbank-claude-sonnet-5",
+            "ANTHROPIC_DEFAULT_OPUS_MODEL": "cloudbank-claude-opus-5",
             "ANTHROPIC_MODEL": "haiku",
         },
         "availableModels": ["haiku", "sonnet", "opus"],
@@ -105,18 +107,22 @@ def write_settings(api_key):
     SETTINGS_PATH.chmod(0o600)
     print(f"Wrote {SETTINGS_PATH}")
     print("Start Claude Code with: claude")
+    print("Or open a Jupyter-AI chat and select: Claude")
 
 
-def key_from_settings():
-    """Recover the key from an already-written settings.json."""
+def load_existing_settings():
+    """Parse an already-written settings.json, if any."""
     if not SETTINGS_PATH.exists():
         return None
     try:
-        return json.loads(SETTINGS_PATH.read_text()).get("env", {}).get(
-            "ANTHROPIC_API_KEY"
-        )
+        return json.loads(SETTINGS_PATH.read_text())
     except (json.JSONDecodeError, OSError):
         return None
+
+
+def is_cloudbank_settings(data):
+    """True if data looks like a settings.json we wrote for CloudBank."""
+    return bool(data) and data.get("env", {}).get("ANTHROPIC_BASE_URL") == BASE_URL
 
 
 def api_get(path, api_key):
@@ -210,7 +216,10 @@ def verify_key(api_key):
         for model_id in ids:
             print(f"  {model_id}")
 
+        print("\nDefault model: Haiku")
+
     print("\n✓ Key is valid")
+    return True
 
 
 def main():
@@ -218,11 +227,7 @@ def main():
         description=f"Configure Claude Code to use the CloudBank LiteLLM proxy at {BASE_URL}"
     )
     mode = parser.add_mutually_exclusive_group()
-    mode.add_argument(
-        "--verify-key",
-        action="store_true",
-        help="query the proxy for key info (budget, balance, quotas) instead of writing settings",
-    )
+
     mode.add_argument(
         "--restore",
         action="store_true",
@@ -234,14 +239,16 @@ def main():
         restore_settings()
         return
 
-    if args.verify_key:
-        api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip() or key_from_settings()
-        if not api_key:
-            api_key = prompt_for_key()
-        verify_key(api_key)
-        return
+    existing = load_existing_settings()
+    if is_cloudbank_settings(existing):
+        api_key = existing["env"].get("ANTHROPIC_API_KEY", "")
+        if api_key and verify_key(api_key):
+            print(f"{SETTINGS_PATH} already configured with a valid key; nothing to do.")
+            return
 
-    write_settings(prompt_for_key())
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip() or prompt_for_key()
+    if verify_key(api_key):
+        write_settings(api_key)
 
 
 if __name__ == "__main__":

@@ -14,15 +14,22 @@ trap 'rm -rf "${XDG_CACHE_HOME}"' EXIT
 # Install Pixi
 curl -fsSL https://pixi.sh/install.sh | sh
 
-# Install JupyterAI Connections or other things
+# Install AWS CLI v2
+curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash
+
+# Also Claude Code CLI
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Install GitHub CoPilot CLI (also enables copilot via JupyterAI)
+curl -fsSL https://gh.io/copilot-install | bash
+
+# JupyterAI Connections or other things
+# https://jupyter-ai.readthedocs.io/en/stable/getting-started.html#install-agents
 # npm caches to ~/.npm rather than $XDG_CACHE_HOME, so clean it up explicitly
 # (~117MB that would otherwise be baked into the image).
 npm install -g @agentclientprotocol/claude-agent-acp
 npm cache clean --force
 
-# Also Claude Code CLI
-curl -fsSL https://claude.ai/install.sh | bash
-
-# Helper to point Claude Code at the CloudBank LiteLLM proxy
-mkdir -p "${HOME}/.local/bin"
-install -m 755 binder/setup-claude-cloudbank.py "${HOME}/.local/bin/setup-claude-cloudbank"
+# Install custom scripts
+$NB_PYTHON_PREFIX/
+install -m 755 binder/setup-claude-cloudbank.py "$NB_PYTHON_PREFIX/bin/setup-claude-cloudbank"

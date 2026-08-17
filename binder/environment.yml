@@ -23,4 +23,6 @@ dependencies:
   - xarray
   - pip
   - pip:
-    - jupyter-ai-jupyternaut==0.1.0b0
+    # JupyterNaut in rapid flux https://github.com/jupyterlab/jupyter-ai/issues/1618
+    - jupyter-ai-jupyternaut==0.1.0b1
+    - jupyterhub-usage-quotas

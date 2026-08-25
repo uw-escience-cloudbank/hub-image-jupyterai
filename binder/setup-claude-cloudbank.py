@@ -25,12 +25,13 @@ from pathlib import Path
 BASE_URL = "https://llmaven-prod-litellm-prod.lemonmoss-19296c81.westus2.azurecontainerapps.io"
 SETTINGS_PATH = Path.home() / ".claude" / "settings.json"
 
-
+# NOTE: ANTHROPIC_AUTH_TOKEN rather than ANTHROPIC_API_KEY!
+# per https://code.claude.com/docs/en/authentication#restrict-login-to-your-organization 
 def settings_template(api_key):
     return {
         "env": {
             "ANTHROPIC_BASE_URL": BASE_URL,
-            "ANTHROPIC_API_KEY": api_key,
+            "ANTHROPIC_AUTH_TOKEN": api_key,
             "ANTHROPIC_DEFAULT_HAIKU_MODEL": "cloudbank-claude-haiku-4-5",
             "ANTHROPIC_DEFAULT_SONNET_MODEL": "cloudbank-claude-sonnet-5",
             "ANTHROPIC_DEFAULT_OPUS_MODEL": "cloudbank-claude-opus-5",

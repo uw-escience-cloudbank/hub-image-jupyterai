@@ -7,7 +7,7 @@ dependencies:
   # Pin the version of Python you want!
   - python=3.14
   # Warning: jupyter-ai is evolving rapily! consider specific pin
-  - jupyter-ai>=3.1
+  - jupyter-ai>=3.2
   # For vscode (or rstudio) UIs in addition to jupyterlab
   # https://docs.2i2c.org/admin/environment/alternative-interfaces/#vs-code-code-server
   - jupyter-server-proxy
@@ -24,5 +24,4 @@ dependencies:
   - pip
   - pip:
     # JupyterNaut in rapid flux https://github.com/jupyterlab/jupyter-ai/issues/1618
-    - jupyter-ai-jupyternaut==0.1.0b1
-    - jupyterhub-usage-quotas
+    - jupyter-ai-jupyternaut==0.1.0

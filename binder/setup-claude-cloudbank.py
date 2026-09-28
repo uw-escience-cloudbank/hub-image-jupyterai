@@ -26,7 +26,7 @@ BASE_URL = "https://llmaven-prod-litellm-prod.lemonmoss-19296c81.westus2.azureco
 SETTINGS_PATH = Path.home() / ".claude" / "settings.json"
 
 # NOTE: ANTHROPIC_AUTH_TOKEN rather than ANTHROPIC_API_KEY!
-# per https://code.claude.com/docs/en/authentication#restrict-login-to-your-organization 
+# per https://code.claude.com/docs/en/authentication#restrict-login-to-your-organization
 def settings_template(api_key):
     return {
         "env": {
@@ -44,19 +44,19 @@ def settings_template(api_key):
 
 
 def prompt_for_key():
-    """Read ANTHROPIC_API_KEY from the environment or prompt for it."""
-    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    """Read ANTHROPIC_AUTH_TOKEN from the environment or prompt for it."""
+    key = os.environ.get("ANTHROPIC_AUTH_TOKEN", "").strip()
     if key:
-        print(f"Using ANTHROPIC_API_KEY from environment ({mask(key)})")
+        print(f"Using ANTHROPIC_AUTH_TOKEN from environment ({mask(key)})")
         return key
 
     if not sys.stdin.isatty():
         sys.exit(
-            "error: no tty to prompt on; set ANTHROPIC_API_KEY in the environment instead"
+            "error: no tty to prompt on; set ANTHROPIC_AUTH_TOKEN in the environment instead"
         )
 
     while True:
-        key = getpass.getpass("ANTHROPIC_API_KEY (input hidden): ").strip()
+        key = getpass.getpass("ANTHROPIC_AUTH_TOKEN (input hidden): ").strip()
         if key:
             return key
         print("A key is required.")
@@ -242,12 +242,12 @@ def main():
 
     existing = load_existing_settings()
     if is_cloudbank_settings(existing):
-        api_key = existing["env"].get("ANTHROPIC_API_KEY", "")
+        api_key = existing["env"].get("ANTHROPIC_AUTH_TOKEN", "")
         if api_key and verify_key(api_key):
             print(f"{SETTINGS_PATH} already configured with a valid key; nothing to do.")
             return
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip() or prompt_for_key()
+    api_key = os.environ.get("ANTHROPIC_AUTH_TOKEN", "").strip() or prompt_for_key()
     if verify_key(api_key):
         write_settings(api_key)
 

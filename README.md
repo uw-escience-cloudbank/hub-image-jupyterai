@@ -56,7 +56,7 @@ docker run -it --rm ghcr.io/uw-escience-cloudbank/hub-image-jupyterai:latest /bi
 
 The image ships a `setup-claude-cloudbank` helper that points the Claude Code CLI at the CloudBank
 LiteLLM proxy. It backs up any existing `~/.claude/settings.json` to `settings.json.bak`, prompts
-for a key (or reuses `ANTHROPIC_API_KEY` from the environment), and writes a fresh config:
+for a key (or reuses `ANTHROPIC_AUTH_TOKEN` from the environment), and writes a fresh config:
 
 ```
 setup-claude-cloudbank                # write ~/.claude/settings.json
@@ -67,6 +67,10 @@ setup-claude-cloudbank --restore      # undo: put the pre-workshop settings.json
 `--restore` stashes the workshop config as `settings.json.workshop` and moves `settings.json.bak`
 back into place. Nothing is ever overwritten: if a destination name is taken, the file lands at
 `<name>-backup`, then `<name>-backup-2`, and so on.
+
+## JupyterAI "Jupyternaut" 
+
+JupyterAI can connect to Claude (see above) or Copilot directly with standard configuration of those tools. It also has a mechanism to connect to custom agents or endpoints via a https://github.com/jupyter-ai-contrib/jupyter-ai-jupyternaut. 
 
 To have jupyter-ai automatically connect to an LLM proxy (e.g. the [LiteLLM Proxy server](https://github.com/uw-ssec/llmoxie)), set `OPENAI_API_BASE` and `OPENAI_API_KEY` in the container environment.
 

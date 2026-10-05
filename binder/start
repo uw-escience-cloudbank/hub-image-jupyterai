@@ -5,4 +5,11 @@ set -euo pipefail
 # also /tmp is a faster SSD compared to $HOME (NFS)
 export PIXI_CACHE_DETACHED_ENVIRONMENTS_DIR=/tmp/pixi-envs
 
+# temporary test of automating jhub/litellm connection
+# ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN are set upon login
+# other settings may be dependent on particular litellm deployment
+# and should be set here
+export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4-6"
+export ANTHROPIC_MODEL="sonnet"
+
 exec "$@"

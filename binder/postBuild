@@ -43,13 +43,19 @@ curl -fsSL https://claude.ai/install.sh | HOME="${REPO_DIR}" bash
 # GitHub CoPilot CLI (also enables copilot via JupyterAI)
 curl -fsSL https://gh.io/copilot-install | PREFIX="${REPO_DIR}/.local" bash
 
+# GitHub GH CLI (latest precompiled binary from GitHub Release)
+VER=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -oP '"tag_name": "v\K[^"]+')
+curl -L https://github.com/cli/cli/releases/download/v${VER}/gh_${VER}_linux_amd64.tar.gz | tar -xz
+install gh_${VER}_linux_amd64/bin/gh "$BIN_DIR/gh"
+rm -rf gh_${VER}_linux_amd64
+gh --version
+
 # JupyterAI Connections or other things
 # https://jupyter-ai.readthedocs.io/en/stable/getting-started.html#install-agents
 # npm caches to ~/.npm rather than $XDG_CACHE_HOME, so clean it up explicitly
 # (~117MB that would otherwise be baked into the image).
 npm install -g @agentclientprotocol/claude-agent-acp
 npm cache clean --force
-
 
 # VSCode Extensions
 # https://docs.2i2c.org/admin/environment/code-server/
